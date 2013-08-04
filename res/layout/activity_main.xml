@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+    <TextView
+        android:id="@+id/levels_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/spinnerLevels"
+        android:layout_alignLeft="@+id/checkBoxHumanStart"
+        android:gravity="center"
+        android:text="@string/level_default"
+        android:textSize="24sp" />
+
+    <Spinner
+        android:id="@+id/spinnerLevels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/buttonStart"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/buttonStart"
+        android:layout_marginTop="41dp"
+        android:entries="@array/levels"
+        android:prompt="@string/level_default" />
+
+    <CheckBox
+        android:id="@+id/checkBoxHumanStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="38dp"
+        android:text="@string/checkboxHumanStart" />
+
+    <Button
+        android:id="@+id/buttonStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/checkBoxHumanStart"
+        android:layout_marginRight="58dp"
+        android:onClick="startGameActivity"
+        android:text="@string/button_start" />
+
+</RelativeLayout>

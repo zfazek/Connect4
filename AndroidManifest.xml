@@ -24,8 +24,9 @@
         </activity>
         <activity
             android:name="com.ongroa.connect4.GameActivity"
-            android:label="@string/title_activity_game"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:label="@string/title_activity_game" >
         </activity>
     </application>
 

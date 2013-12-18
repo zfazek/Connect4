@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -35,13 +36,23 @@ public class GameActivity extends Activity {
 	private boolean isHumanTurn;
 	private boolean isHumanStart;
 
-	@SuppressLint("NewApi")
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setTitle("O's Connect 4");
 		setContentView(R.layout.activity_game);
+		setTitle("Connect 4");
+		setSize();
+		level = getIntent().getIntExtra("LEVEL", 3);
+		isHumanStart = getIntent().getBooleanExtra("IS_HUMAN_START", true);
+		drawView = new DrawView(this);
+		drawView.setBackgroundColor(Color.WHITE);
+		setContentView(drawView);
+		initGame();
+	}
+
+	@SuppressLint("NewApi")
+	@SuppressWarnings("deprecation")
+	private void setSize() {
 		Display display = getWindowManager().getDefaultDisplay();
 		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
 			Point point = new Point();
@@ -58,13 +69,20 @@ public class GameActivity extends Activity {
 				size = (display.getHeight() - getStatusBarHeight()) / 8;
 			}
 		}
-		level = getIntent().getIntExtra("LEVEL", 3);
-		isHumanStart = getIntent().getBooleanExtra("IS_HUMAN_START", true);
-		humanPlayer = new HumanPlayer();
-		computerPlayer = new ComputerPlayer();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig)	{
+		super.onConfigurationChanged(newConfig);
 		drawView = new DrawView(this);
 		drawView.setBackgroundColor(Color.WHITE);
 		setContentView(drawView);
+		setSize();
+	}
+
+	private void initGame() {
+		humanPlayer = new HumanPlayer();
+		computerPlayer = new ComputerPlayer();
 		initTable();
 	}
 
@@ -77,7 +95,7 @@ public class GameActivity extends Activity {
 		}
 		return result;
 	}
-
+	
 	private void initTable() {
 		table = new Table();
 		table.setOrder();
@@ -183,17 +201,17 @@ public class GameActivity extends Activity {
 	}
 
 	public String getResult(Table table) {
-		String returnString = "VÉGE\n";
-		if (table.isWon(table.HUMAN)) returnString += "Nyertél!\n";
-		else if (table.isWon(table.COMPUTER)) returnString += "Vesztettél!\n";
-		else returnString += "Döntetlen!\n";
+		String returnString = "";
+		if (table.isWon(table.HUMAN)) returnString += "You won!\n";
+		else if (table.isWon(table.COMPUTER)) returnString += "You lost!\n";
+		else returnString += "Draw!\n";
 		return returnString;
 	}
 
 	private void showResultDialog(String result) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(result);
-		builder.setTitle("Game over.");
+		builder.setTitle("Game over!");
 		builder.setPositiveButton("OK", 
 				new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
@@ -280,6 +298,7 @@ public class GameActivity extends Activity {
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
 				int x = (int)event.getX() / size + 1;
 				int y = (int)event.getY() / size + 1;
+				if (x > 7) return false;
 				if (x <= 2 && y == 1) moveBack();
 				else
 					if (table.isLegalMove(x)) {

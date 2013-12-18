@@ -4,8 +4,8 @@
     <string name="app_name">O\'s Connect 4</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
-    <string name="checkboxHumanStart">Te kezdesz</string>
-    <string name="level_default">Fokozat</string>
+    <string name="checkboxHumanStart">You start</string>
+    <string name="level_default">Level</string>
     <string name="button_start">Start</string>
 
     <string-array name="levels">

@@ -3,7 +3,7 @@ package com.ongroa.connect4;
 import static java.lang.Math.*;
 
 
-public class ComputerPlayer{
+public class ComputerPlayer {
 
 	final int COMPUTER = 2;
 	private int color = COMPUTER;

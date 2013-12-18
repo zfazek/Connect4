@@ -1,20 +1,19 @@
 package com.ongroa.connect4;
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.Point;
+import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -24,7 +23,6 @@ public class GameActivity extends Activity {
 	final int HUMAN = 1;
 	final int COMPUTER = 2;
 	final int BORDER = 3;
-	int width;
 	int height;
 	int size;
 	int lastMove;
@@ -37,16 +35,29 @@ public class GameActivity extends Activity {
 	private boolean isHumanTurn;
 	private boolean isHumanStart;
 
+	@SuppressLint("NewApi")
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setTitle("O's Connect 4");
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		setContentView(R.layout.activity_game);
 		Display display = getWindowManager().getDefaultDisplay();
-		@SuppressWarnings("deprecation")
-		int width = display.getWidth();
-		size = width / 7;
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+			Point point = new Point();
+			display.getSize(point);
+			if (point.x < point.y) {
+				size = point.x / 7;
+			} else {
+				size = (point.y - getStatusBarHeight()) / 8;
+			}
+		} else {
+			if (display.getWidth() < display.getHeight()) {
+				size = display.getWidth() / 7;
+			} else {
+				size = (display.getHeight() - getStatusBarHeight()) / 8;
+			}
+		}
 		level = getIntent().getIntExtra("LEVEL", 3);
 		isHumanStart = getIntent().getBooleanExtra("IS_HUMAN_START", true);
 		humanPlayer = new HumanPlayer();
@@ -57,10 +68,14 @@ public class GameActivity extends Activity {
 		initTable();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_game, menu);
-		return true;
+	private int getStatusBarHeight() {
+		int result = 0;
+		int resourceId = getResources().getIdentifier("status_bar_height", 
+				"dimen", "android");
+		if (resourceId > 0) {
+			result = getResources().getDimensionPixelSize(resourceId);
+		}
+		return result;
 	}
 
 	private void initTable() {
@@ -155,7 +170,7 @@ public class GameActivity extends Activity {
 		for (i = 1; i < y; i++) {
 			table.setField(move, i, color);
 			drawView.invalidate();
-//			waitMillis(200);
+			//			waitMillis(200);
 			table.setField(move, i, table.EMPTY);
 		}
 		table.makeMove(color, move);
@@ -189,8 +204,9 @@ public class GameActivity extends Activity {
 		dialog.show();
 	}
 
+	@SuppressWarnings("unused")
 	private void waitMillis(long x) {
-//		Log.d("AA", "wait " + x);
+		//		Log.d("AA", "wait " + x);
 		try {
 			Thread.sleep(x);
 		} catch (InterruptedException e) {

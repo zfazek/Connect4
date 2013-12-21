@@ -1,8 +1,5 @@
 package com.ongroa.connect4;
 
-import static java.lang.Math.*;
-
-
 public class ComputerPlayer {
 
 	final int COMPUTER = 2;
@@ -69,7 +66,7 @@ public class ComputerPlayer {
 							n++;
 							point = table.evaluate(player);
 							point += 10 * ((10 - Math.abs(4 - x)) + y);
-							point += (int)(random() * 20);
+//							point += (int)(random() * 20);
 							//System.out.printf("l: %i, color: %i, evaluation: 
 							//(%i): %i\n", l, player, x, point);
 							table.removeDisc(x);

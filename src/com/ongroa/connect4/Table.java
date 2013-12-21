@@ -1,8 +1,14 @@
 package com.ongroa.connect4;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Table {
+
+	private boolean useHash = false;
+
+	public Hash hash;
+	private HashMap<Long, Integer> hashmap;
 
 	private int[][] field = new int[9][8];
 	private int[] order = new int[7];
@@ -34,6 +40,12 @@ public class Table {
 
 	public Table() {
 		moves = new ArrayList<Integer>();
+		hash = new Hash();
+		hashmap = new HashMap<Long, Integer>();
+		setOrder();
+		clearTable();
+		clearMoveList();
+		initHash();
 	}
 
 	public void clearMoveList() {
@@ -73,7 +85,7 @@ public class Table {
 	public int isGameOver() {
 		if (isWon(HUMAN)) return HUMAN;
 		if (isWon(COMPUTER)) return COMPUTER;
-		
+
 		//Check for draw: check each upper field empty or not
 		for(int x = 1; x < 8; x++) 
 			if (getField(x, 1) == EMPTY) return INVALID;
@@ -188,7 +200,6 @@ public class Table {
 
 	public void addMoveToList(int x) {
 		moves.add(x);
-		// System.out.println(moves);
 	}
 
 	public void removeMoveFromList() {
@@ -196,11 +207,25 @@ public class Table {
 			int x = moves.get(moves.size() - 1);
 			removeDisc(x);
 			moves.remove(moves.size() - 1);
-			// System.out.println(moves);
 		}
 	}
 
 	public int evaluate(int color) {
+		if (useHash) {
+			long hash_key = hash.getHash(field, color);
+			if (hashmap.containsKey(hash_key)) {
+				return hashmap.get(hash_key);
+			} else {
+				int eval =  evaluatePosition(color);
+				hashmap.put(hash_key, eval);
+				return eval;
+			}
+		} else {
+			return evaluatePosition(color);
+		}
+	}
+
+	private int evaluatePosition(int color) {
 		int point = 0;
 		for(int x = 1; x < 8; x++)
 			for(int y = 1; y < 7; y++) {
@@ -269,6 +294,10 @@ public class Table {
 		if (k == 2 && open == 2) return POINT_TWO_OPEN;
 		if (k == 2 && open == 1) return POINT_TWO_CLOSED;
 		return 0;
+	}
+
+	public void initHash() {
+		hash.initHash();
 	}
 
 }

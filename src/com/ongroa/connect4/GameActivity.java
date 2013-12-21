@@ -84,6 +84,7 @@ public class GameActivity extends Activity {
 		humanPlayer = new HumanPlayer();
 		computerPlayer = new ComputerPlayer();
 		initTable();
+		resetGame();
 	}
 
 	private int getStatusBarHeight() {
@@ -98,13 +99,9 @@ public class GameActivity extends Activity {
 	
 	private void initTable() {
 		table = new Table();
-		table.setOrder();
-		resetGame();
 	}
 
 	public void resetGame() {
-		table.clearTable();
-		table.clearMoveList();
 		drawView.invalidate();
 		if (isHumanStart) {
 			isHumanTurn = true;
@@ -158,7 +155,10 @@ public class GameActivity extends Activity {
 						threadHumanMove.join();
 				} catch (InterruptedException e) {
 				}
+				long time1 = System.currentTimeMillis();
 				lastMove = computerPlayer.getMove(table, level);
+				long time2 = System.currentTimeMillis();
+				System.out.printf("time: %d\n", time2 - time1);
 				table.addMoveToList(lastMove);
 				runOnUiThread(new Runnable() {
 					@Override

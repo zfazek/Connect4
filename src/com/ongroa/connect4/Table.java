@@ -8,20 +8,21 @@ public class Table {
 	private int[] order = new int[7];
 	private ArrayList<Integer> moves;
 
-	final int EMPTY = 0;
-	final int HUMAN = 1;
-	final int COMPUTER = 2;
-	final int BORDER = 3;
+	final static int INVALID = -1;
+	final static int EMPTY = 0;
+	final static int HUMAN = 1;
+	final static int COMPUTER = 2;
+	final static int BORDER = 3;
 
-	final int POINT_FOUR = 1000;
-	final int POINT_THREE_OPEN = 250;
-	final int POINT_THREE_CLOSED = 25;
-	final int POINT_TWO_OPEN = 25;
-	final int POINT_TWO_CLOSED = 10;
+	final static int POINT_FOUR = 1000;
+	final static int POINT_THREE_OPEN = 250;
+	final static int POINT_THREE_CLOSED = 25;
+	final static int POINT_TWO_OPEN = 25;
+	final static int POINT_TWO_CLOSED = 10;
 
-	final int MAX_POINT = 10000;
-	final int MIN_POINT = -10000;
-	final int DRAW = 0;
+	final static int MAX_POINT = 10000;
+	final static int MIN_POINT = -10000;
+	final static int DRAW = 0;
 
 	public int[][] getTable() { 
 		return field; 
@@ -30,7 +31,7 @@ public class Table {
 	public void setTable(int[][] field) {
 		this.field = field;
 	}
-	
+
 	public Table() {
 		moves = new ArrayList<Integer>();
 	}
@@ -72,9 +73,10 @@ public class Table {
 	public int isGameOver() {
 		if (isWon(HUMAN)) return HUMAN;
 		if (isWon(COMPUTER)) return COMPUTER;
+		
 		//Check for draw: check each upper field empty or not
 		for(int x = 1; x < 8; x++) 
-			if (getField(x, 1) == EMPTY) return -1;
+			if (getField(x, 1) == EMPTY) return INVALID;
 		return DRAW;
 	}
 
@@ -96,7 +98,8 @@ public class Table {
 		return false;
 	}
 
-	private boolean isFoundFourInOneDir(int x, int y, int color, int dx, int dy) {
+	private boolean isFoundFourInOneDir(int x, int y, int color, int dx, 
+			int dy) {
 		int row = 1;
 		while(x + dx > 0 && x + dx < 8 && y + dy > 0 && y + dy < 7 && 
 				getField(x + dx, y + dy) == color && row < 4) {
@@ -121,7 +124,7 @@ public class Table {
 			setField(0, y, BORDER);
 			setField(8, y, BORDER);
 		}
-//		setInitalTable();
+		// setInitalTable();
 	}
 
 	public void setInitalTable() {
@@ -142,7 +145,7 @@ public class Table {
 		setField(6, 5, COMPUTER);
 		setField(6, 6, COMPUTER);
 	}
-	
+
 	public static void copyTable(Table table1, Table table2) {
 		for(int x = 0; x < 9; x++)
 			for(int y = 0; y < 8; y++) {
@@ -155,11 +158,10 @@ public class Table {
 	}
 
 	public void makeMove(int color, int column) {
-		//	printf("player.color: %i, column: %i\n", player.color, column);
 		if (isLegalMove(column)) 
 			putDisc(color, column);
 		else {
-//			System.out.println(color + " " + column + " is not legal");
+			// System.out.println(color + " " + column + " is not legal");
 		}
 	}
 
@@ -183,10 +185,10 @@ public class Table {
 			}
 		}
 	}
-	
+
 	public void addMoveToList(int x) {
 		moves.add(x);
-//		System.out.println(moves.toString());
+		// System.out.println(moves);
 	}
 
 	public void removeMoveFromList() {
@@ -194,13 +196,12 @@ public class Table {
 			int x = moves.get(moves.size() - 1);
 			removeDisc(x);
 			moves.remove(moves.size() - 1);
-//			System.out.println(moves.toString());
+			// System.out.println(moves);
 		}
 	}
 
-	public int evaluate(int player) {
+	public int evaluate(int color) {
 		int point = 0;
-		int color = player;
 		for(int x = 1; x < 8; x++)
 			for(int y = 1; y < 7; y++) {
 				if (getField(x, y) == color) {
@@ -215,7 +216,6 @@ public class Table {
 				}
 			}
 		int point_tmp = point;
-		//	printf("point: %i\n", point);
 		if (color == HUMAN) {
 			color = COMPUTER;
 		} else {
@@ -235,28 +235,34 @@ public class Table {
 					point -= 2 * evaluateDir(x, y, color, 1, -1);
 				}
 			}
-		//	printf("\tpoint: %i\n", point);
 		return point_tmp + point;
 	}
 
 	private int evaluateDir(int x, int y, int color, int dx, int dy) {
 		int k = 1;
 		int open = 2;
+
 		// check in reverse dir
-		if (getField(x - dx, y - dy) == color) return 0;  //not the edge of line
-		if (getField(x - dx, y - dy) != EMPTY) { open -= 1; } //not open in the back end
+		//not the edge of line
+		if (getField(x - dx, y - dy) == color) return 0;
+
+		//not open in the back end
+		if (getField(x - dx, y - dy) != EMPTY) { open -= 1; }
 		while (getField(x + k * dx, y + k * dy) == color) {
 			k += 1;
 		}
-		if (getField(x + k * dx, y + k * dy) != EMPTY) { open -= 1; } //not open in the end
+
+		//not open in the end
+		if (getField(x + k * dx, y + k * dy) != EMPTY) { open -= 1; }
+
 		// check XX X like patterns
 		if (k > 1 && getField(x + k * dx, y + k * dy) == EMPTY &&
 				getField(x + k * dx + dx, y + k * dy + dy) == color) {
 			k += 1;
-			if (getField(x + k * dx + dx, y + k * dy + dy) != EMPTY) { open -= 1; }
-		}	
-		//	if (color==HUMAN) {printf("\t");}
-		//	printf("%i,%i, %i,%i, k: %i, open: %i\n", x,y,dx,dy,k,open);
+			if (getField(x + k * dx + dx, y + k * dy + dy) != EMPTY) { 
+				open -= 1; 
+			}
+		}
 		if (k >= 4) return POINT_FOUR;
 		if (k == 3 && open == 2) return POINT_THREE_OPEN;
 		if (k == 3 && open == 1) return POINT_THREE_CLOSED;

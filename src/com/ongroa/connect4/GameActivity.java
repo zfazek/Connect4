@@ -156,7 +156,6 @@ public class GameActivity extends Activity {
 					if (threadHumanMove != null && 
 							threadHumanMove.isAlive())
 						threadHumanMove.join();
-					//					drawView.invalidate();
 				} catch (InterruptedException e) {
 				}
 				lastMove = computerPlayer.getMove(table, level);
@@ -181,15 +180,14 @@ public class GameActivity extends Activity {
 
 	private void animateMove(int color, int move) {
 		int i = 1;
-		while (table.getField(move, i) == table.EMPTY) {
+		while (table.getField(move, i) == Table.EMPTY) {
 			i++;
 		}
 		int y = i - 1;
 		for (i = 1; i < y; i++) {
 			table.setField(move, i, color);
 			drawView.invalidate();
-			//			waitMillis(200);
-			table.setField(move, i, table.EMPTY);
+			table.setField(move, i, Table.EMPTY);
 		}
 		table.makeMove(color, move);
 		drawView.invalidate();
@@ -202,8 +200,8 @@ public class GameActivity extends Activity {
 
 	public String getResult(Table table) {
 		String returnString = "";
-		if (table.isWon(table.HUMAN)) returnString += "You won!\n";
-		else if (table.isWon(table.COMPUTER)) returnString += "You lost!\n";
+		if (table.isWon(Table.HUMAN)) returnString += "You won!\n";
+		else if (table.isWon(Table.COMPUTER)) returnString += "You lost!\n";
 		else returnString += "Draw!\n";
 		return returnString;
 	}
@@ -309,6 +307,9 @@ public class GameActivity extends Activity {
 		}
 
 		private void moveBack() {
+			if (threadComputerMove != null && 
+					threadComputerMove.isAlive())
+				return;
 			if (! isHumanStart && table.getMoveListSize() == 1) {
 			}
 			else {

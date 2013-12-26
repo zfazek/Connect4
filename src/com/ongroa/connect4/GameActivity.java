@@ -20,10 +20,10 @@ import android.view.View;
 
 public class GameActivity extends Activity {
 	DrawView drawView;
-	final int EMPTY = 0;
-	final int HUMAN = 1;
-	final int COMPUTER = 2;
-	final int BORDER = 3;
+//	final int EMPTY = 0;
+//	final int HUMAN = 1;
+//	final int COMPUTER = 2;
+//	final int BORDER = 3;
 	int height;
 	int size;
 	int lastMove;
@@ -270,15 +270,15 @@ public class GameActivity extends Activity {
 			for (int y = 1; y < 7; y++) {
 				for (int x = 1; x < 8; x++) {
 					switch (t[x][y]) {
-					case EMPTY:
+					case Table.EMPTY:
 						color = Color.WHITE;
 						paint.setColor(color);
 						break;
-					case HUMAN:
+					case Table.HUMAN:
 						color = Color.RED;
 						paint.setColor(color);
 						break;
-					case COMPUTER:
+					case Table.COMPUTER:
 						color = Color.BLUE;
 						paint.setColor(color);
 						break;
